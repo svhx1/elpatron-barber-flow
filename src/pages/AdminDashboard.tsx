@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Users, Scissors, Calendar, TrendingUp, Clock, Star,
-  UserCheck, UserX, AlertCircle, FileSpreadsheet, HelpCircle
+  Users, Scissors, TrendingUp, Clock, Star,
+  UserCheck, UserX, FileSpreadsheet, HelpCircle
 } from "lucide-react";
+import { Bar, BarChart, Line, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { ScreenNavigator } from "@/components/ScreenNavigator";
@@ -27,6 +28,25 @@ const statusColor: Record<string, string> = {
   "indisponível": "bg-destructive/10 text-destructive",
 };
 
+const clientesLucroDia = [
+  { dia: "Seg", clientes: 18, lucro: 720 },
+  { dia: "Ter", clientes: 22, lucro: 880 },
+  { dia: "Qua", clientes: 15, lucro: 600 },
+  { dia: "Qui", clientes: 28, lucro: 1120 },
+  { dia: "Sex", clientes: 35, lucro: 1400 },
+  { dia: "Sáb", clientes: 42, lucro: 1680 },
+  { dia: "Dom", clientes: 10, lucro: 400 },
+];
+
+const lucroVsFaturamento = [
+  { mes: "Jan", faturamento: 12000, lucro: 4800 },
+  { mes: "Fev", faturamento: 14500, lucro: 5800 },
+  { mes: "Mar", faturamento: 13200, lucro: 5280 },
+  { mes: "Abr", faturamento: 16000, lucro: 6400 },
+  { mes: "Mai", faturamento: 18500, lucro: 7400 },
+  { mes: "Jun", faturamento: 17000, lucro: 6800 },
+];
+
 export default function AdminDashboard() {
   const [showTutorial, setShowTutorial] = useState(true);
 
@@ -41,7 +61,7 @@ export default function AdminDashboard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 z-40 flex items-center justify-center bg-charcoal/60 backdrop-blur-sm"
+            className="fixed inset-0 z-40 flex items-center justify-center bg-foreground/40 backdrop-blur-sm"
           >
             <div className="bg-background rounded-xl p-8 max-w-md w-full mx-4 shadow-elevated border border-border">
               <div className="flex items-center gap-3 mb-4">
@@ -65,7 +85,7 @@ export default function AdminDashboard() {
               </p>
               <button
                 onClick={() => setShowTutorial(false)}
-                className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-body text-sm font-medium hover:bg-charcoal-light transition-colors"
+                className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-body text-sm font-medium hover:opacity-90 transition-opacity"
               >
                 Entendido
               </button>
@@ -79,6 +99,71 @@ export default function AdminDashboard() {
           <StatCard title="Indisponíveis" value={1} icon={UserX} />
           <StatCard title="Atendimentos Hoje" value={25} icon={Scissors} trend="+12% vs ontem" />
           <StatCard title="Faturamento" value="R$ 1.850" icon={TrendingUp} trend="+8% vs ontem" />
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Clientes do dia + Lucro */}
+          <section className="bg-card rounded-lg border border-border p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="font-display text-lg font-semibold">Clientes & Lucro por Dia</h2>
+              <button className="text-accent hover:text-accent/80" title="Barras = clientes, Linha = lucro do dia">
+                <HelpCircle className="w-4 h-4" />
+              </button>
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={clientesLucroDia}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="dia" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <YAxis yAxisId="left" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                  }}
+                  formatter={(value: number, name: string) => [
+                    name === 'clientes' ? `${value} clientes` : `R$ ${value}`,
+                    name === 'clientes' ? 'Clientes' : 'Lucro'
+                  ]}
+                />
+                <Legend />
+                <Bar yAxisId="left" dataKey="clientes" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} name="Clientes" />
+                <Line yAxisId="right" type="monotone" dataKey="lucro" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} name="Lucro (R$)" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </section>
+
+          {/* Lucro vs Faturamento */}
+          <section className="bg-card rounded-lg border border-border p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="font-display text-lg font-semibold">Lucro vs Faturamento</h2>
+              <button className="text-accent hover:text-accent/80" title="Comparação mensal entre faturamento bruto e lucro líquido">
+                <HelpCircle className="w-4 h-4" />
+              </button>
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={lucroVsFaturamento}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="mes" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                  }}
+                  formatter={(value: number, name: string) => [`R$ ${value.toLocaleString()}`, name === 'faturamento' ? 'Faturamento' : 'Lucro']}
+                />
+                <Legend />
+                <Area type="monotone" dataKey="faturamento" fill="hsl(var(--accent) / 0.15)" stroke="hsl(var(--accent))" strokeWidth={2} name="Faturamento" />
+                <Area type="monotone" dataKey="lucro" fill="hsl(var(--primary) / 0.15)" stroke="hsl(var(--primary))" strokeWidth={2} name="Lucro" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </section>
         </div>
 
         {/* Barbeiros */}
@@ -167,7 +252,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-muted-foreground mb-4">
                 Formatos aceitos: .xlsx, .xls
               </p>
-              <button className="px-5 py-2 rounded-lg bg-primary text-primary-foreground font-body text-sm font-medium hover:bg-charcoal-light transition-colors">
+              <button className="px-5 py-2 rounded-lg bg-primary text-primary-foreground font-body text-sm font-medium hover:opacity-90 transition-opacity">
                 Selecionar Arquivo
               </button>
             </div>
