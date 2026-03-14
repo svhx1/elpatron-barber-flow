@@ -26,6 +26,7 @@ const App = () => (
           <Route path="/cliente" element={<ClientView />} />
           <Route path="/totem" element={<TotemView />} />
           <Route path="/estoque" element={<EstoqueView />} />
+          <Route path="/login" element={<LoginView />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
