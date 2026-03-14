@@ -9,7 +9,7 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 import BarberView from "./pages/BarberView.tsx";
 import ClientView from "./pages/ClientView.tsx";
 import TotemView from "./pages/TotemView.tsx";
-import EstoqueView from "./pages/EstoqueView.tsx";
+import LoginView from "./pages/LoginView.tsx";
 
 const queryClient = new QueryClient();
 
