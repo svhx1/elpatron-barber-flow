@@ -13,6 +13,7 @@ import {
 
 const screens = [
   { name: "Home", path: "/", icon: Home },
+  { name: "Login", path: "/login", icon: User },
   { name: "Admin", path: "/admin", icon: LayoutDashboard },
   { name: "Barbeiro", path: "/barbeiro", icon: Scissors },
   { name: "Cliente", path: "/cliente", icon: User },
