@@ -10,6 +10,7 @@ import BarberView from "./pages/BarberView.tsx";
 import ClientView from "./pages/ClientView.tsx";
 import TotemView from "./pages/TotemView.tsx";
 import LoginView from "./pages/LoginView.tsx";
+import EstoqueView from "./pages/EstoqueView.tsx";
 
 const queryClient = new QueryClient();
 
